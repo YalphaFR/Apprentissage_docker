@@ -1,0 +1,13 @@
+# Utiliser l'image officielle PostgreSQL 14
+FROM postgres:14
+
+# Définir les variables d'environnement pour PostgreSQL
+# CHANGEZ ces valeurs selon vos besoins
+ENV POSTGRES_USER=admin
+ENV POSTGRES_PASSWORD=secret
+ENV POSTGRES_DB=mydatabase
+
+# Expose le port par défaut PostgreSQL
+EXPOSE 5432
+
+# Pas besoin de CMD ou ENTRYPOINT : l'image postgres gère le démarrage
