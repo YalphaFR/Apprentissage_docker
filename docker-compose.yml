@@ -1,0 +1,24 @@
+services:
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    image: mynginx:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+
+  api:
+    container_name: api
+    build: ./api
+    image: myapi:latest
+    ports:
+      - ":8080"
+    depends_on:
+      - redis
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - ":7379"
