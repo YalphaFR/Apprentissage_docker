@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import redis
 import os
@@ -27,7 +28,7 @@ class URLRequest(BaseModel):
 def health():
     return {"status": "ok"}
 
-
+# Function to generate a unique short code
 def generate_unique_code():
     for _ in range(10):  # essais pour éviter collision
         code = ''.join(random.choices(ALLOWED_CHARS, k=CODE_LENGTH))
@@ -35,7 +36,7 @@ def generate_unique_code():
             return code
     raise Exception("Could not generate unique code")
 
-
+# POST /shorten
 @app.post("/shorten", status_code=201)
 async def shorten_url(req: Request):
     try:
@@ -59,10 +60,11 @@ async def shorten_url(req: Request):
         "short_url": f"http://localhost:8080/{short_code}"
     }
 
-
+# GET /{code} - redirect
 @app.get("/{code}")
 def redirect_code(code: str):
     url = r.get(code)
     if not url:
         raise HTTPException(status_code=404, detail={"error": "Short code not found"})
-    return {"Location": url}, 302
+    # RedirectResponse renvoie automatiquement 302 et le header Location
+    return RedirectResponse(url=url)
