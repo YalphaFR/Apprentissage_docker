@@ -67,4 +67,4 @@ def redirect_code(code: str):
     if not url:
         raise HTTPException(status_code=404, detail={"error": "Short code not found"})
     # RedirectResponse renvoie automatiquement 302 et le header Location
-    return RedirectResponse(url=url)
+    return RedirectResponse(url=url, status_code=302)
