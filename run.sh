@@ -7,7 +7,6 @@ docker run -d --name db --network my-tiny-network \
   -e POSTGRES_DB=workshop \
   -e PGDATA=/data \
   -v db-vol:/data \
-  -v $(pwd)/init.sql:/docker-entrypoint-initdb.d/init.sql \
   db
 
 
