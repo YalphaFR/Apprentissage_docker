@@ -5,9 +5,8 @@ docker run -d --name db --network my-tiny-network \
   -e POSTGRES_USER=admin \
   -e POSTGRES_PASSWORD=secret \
   -e POSTGRES_DB=workshop \
-  -e PGDATA=/var/lib/postgresql/data \
-  -v db-vol:/var/lib/postgresql/data \
-  -v $(pwd)/init.sql:/docker-entrypoint-initdb.d/init.sql \
+  -e PGDATA=/data \
+  -v db-vol:/data \
   db
 
 

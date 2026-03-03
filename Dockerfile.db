@@ -10,4 +10,6 @@ ENV POSTGRES_DB=mydatabase
 # Expose le port par défaut PostgreSQL
 EXPOSE 5432
 
+COPY ./init.sql /docker-entrypoint-initdb.d/
+
 # Pas besoin de CMD ou ENTRYPOINT : l'image postgres gère le démarrage
