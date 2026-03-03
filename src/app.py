@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import time
 
 app = Flask(__name__)
 
@@ -44,6 +45,49 @@ def insert_item():
 
     return jsonify({"message": "Item inserted", "id": inserted_id}), 201
 
+def init_default_items():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            # Vérifie combien d'items existent déjà
+            cur.execute("SELECT COUNT(*) FROM items;")
+            count = cur.fetchone()[0]
+
+            if count == 0:
+                # Insère 3 items par défaut
+                default_items = [("Item 1",), ("Item 2",), ("Item 3",)]
+                cur.executemany(
+                    "INSERT INTO items (name) VALUES (%s);",
+                    default_items
+                )
+                conn.commit()
+                print("3 default items created.")
+            else:
+                print("Items already exist, skipping initialization.")
+
+def ensure_table():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS items (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL
+                );
+            """)
+            conn.commit()
+
+def wait_for_db():
+    while True:
+        try:
+            conn = get_conn()
+            conn.close()
+            break
+        except Exception:
+            print("Waiting for DB...")
+            time.sleep(1)
+
 if __name__ == "__main__":
+    wait_for_db()
+    ensure_table()
+    init_default_items()
     # Serveur sur toutes les interfaces sur le port 8080
     app.run(host="0.0.0.0", port=8080)
